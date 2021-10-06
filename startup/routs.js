@@ -6,6 +6,7 @@ const getArticles = require('../routes/getArticles');
 const getTags = require('../routes/getTags');
 const getFilteredArticles = require('../routes/getFilteredArticles');
 const updateArticleLikes = require('../routes/updateArticleLikes');
+const addArticleDirectly = require('../routes/addArticleDirectly');
 
 module.exports = function (app) {
   app.use(express.json());
@@ -17,4 +18,5 @@ module.exports = function (app) {
   app.use('/getTags', getTags);
   app.use('/getFilteredArticles', getFilteredArticles);
   app.use('/updateArticleLikes', updateArticleLikes);
+  app.use('/test', addArticleDirectly);
 };
