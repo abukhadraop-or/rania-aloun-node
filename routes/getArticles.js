@@ -1,25 +1,37 @@
 const express = require('express');
+const {
+  getPagination,
+  getPagingData,
+} = require('../controller/pagination.controller');
 const { Article, tag } = require('../models');
 
 const router = express.Router();
 
 router.get('/', async (req, res) => {
-  const page = req.query.page;
-  const limit = req.query.limit;
-  const startIndex = (page - 1) * limit;
-  const endIndex = page * limit;
+  const { page, size } = req.query;
+  const { limit, offset } = getPagination(page, size);
 
-  const articles = await Article.findAll({
+  const articles = await Article.findAndCountAll({
     include: [
       {
         model: tag,
       },
     ],
-  });
-  const result = articles.slice(startIndex, endIndex);
-  res.json(result);
-
-  res.send(JSON.stringify(articles, null, 2));
+    distinct: true,
+    limit,
+    offset,
+  })
+    .then((data) => {
+      const response = getPagingData(data, page, limit);
+      res.send(response);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message:
+          err.message || 'Some error occurred while retrieving tutorials.',
+      });
+    });
+  // res.send(JSON.stringify(articles, null, 2));
 });
 
 module.exports = router;
