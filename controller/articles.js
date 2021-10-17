@@ -9,7 +9,7 @@ const {
  * Get all articles with pagination and the associations included.
  *
  * @param {express.Request} req Holding the page number, and page size.
- * @param {express.Request} res Response sends json object { totalItems, articles, totalPages, currentPage }.
+ * @param {express.Response} res Response sends json object { totalItems, articles, totalPages, currentPage }.
  *
  */
 const getArticles = async (req, res) => {
