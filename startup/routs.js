@@ -9,7 +9,6 @@ const addArticleDirectly = require('../routes/addArticleDirectly');
 
 module.exports = function (app) {
   app.use(express.json());
-  app.get('/', (req, res) => res.send('TEST'));
   app.use('/addArticle', addArticle);
   app.use('/addTag', addTag);
   app.use('/addAssociation', addAssociation);

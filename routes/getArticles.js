@@ -31,7 +31,6 @@ router.get('/', async (req, res) => {
           err.message || 'Some error occurred while retrieving tutorials.',
       });
     });
-  // res.send(JSON.stringify(articles, null, 2));
 });
 
 module.exports = router;
