@@ -7,7 +7,7 @@ const {
 } = require('../controller/articles');
 
 /**
- * Articles routes
+ * Articles routes.
  */
 router.get('/', getArticles);
 router.post('/', postArticle);

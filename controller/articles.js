@@ -1,14 +1,9 @@
 const express = require('express');
 const {
-  getPagination,
-  getPagingData,
-} = require('../controller/pagination.controller');
-const {
   allArticles,
   addArticle,
-  updateArticleLikes,
+  updateArticlesLikes,
 } = require('../services/articles');
-const { Article, tag } = require('../models');
 
 /**
  * Get all articles with pagination and the associations included.
@@ -19,28 +14,9 @@ const { Article, tag } = require('../models');
  */
 const getArticles = async (req, res) => {
   const { page, size } = req.query;
-  const { limit, offset } = getPagination(page, size);
+  const data = await allArticles(page, size);
 
-  const articles = await Article.findAndCountAll({
-    include: [
-      {
-        model: tag,
-      },
-    ],
-    distinct: true,
-    limit,
-    offset,
-  })
-    .then((data) => {
-      const response = getPagingData(data, page, limit);
-      res.send(response);
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || 'Some error occurred while retrieving tutorials.',
-      });
-    });
+  res.send(data);
 };
 
 /**
@@ -50,24 +26,16 @@ const getArticles = async (req, res) => {
  * @param {express.Response} res Sends the added article as JSON Object.
  */
 const postArticle = async (req, res) => {
-  const data = {
+  const article = {
     userName: req.body.userName,
     publishDate: req.body.publishDate,
     articleTitle: req.body.articleTitle,
     liked: req.body.liked,
     link: req.body.link,
   };
-  const { userName, publishDate, articleTitle, liked, link } = data;
 
-  Article.create({
-    userName,
-    publishDate,
-    articleTitle,
-    liked,
-    link,
-  })
-    .then((add) => res.json(add))
-    .catch((err) => console.log(err));
+  const data = await addArticle(article);
+  res.json(data);
 };
 
 /**
@@ -80,20 +48,8 @@ const updateArticle = async (req, res) => {
   const { id } = req.params;
   const { passed } = req.body;
 
-  Article.update(
-    { liked: passed },
-    {
-      where: { id },
-    }
-  )
-    .then(() => {
-      res.send(JSON.stringify(Article, null, 2));
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: `Error updating Tutorial with id=${id}`,
-      });
-    });
+  const data = await updateArticlesLikes(id, passed);
+  res.send(data);
 };
 
 module.exports = {
