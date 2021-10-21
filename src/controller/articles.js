@@ -46,6 +46,8 @@ const addArticle = async (req, res) => {
  *
  * @param {express.Request}  req Request body holding JSON Object { id, passed }, passed value holds the updated likes count.
  * @param {express.Response} res Response sends the updated article or an error in case of one.
+ *
+ * @return {Promise<Object>} Updated Article.
  */
 const updateArticle = async (req, res) => {
   const { id } = req.params;
