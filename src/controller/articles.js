@@ -11,7 +11,7 @@ const {
  * @param {express.Request}  req Holding the page number, and page size.
  * @param {express.Response} res Response sends json object { totalItems, articles, totalPages, currentPage }.
  *
- * @return {}
+ * @return {Promise<Object>} Fetched articles.
  */
 const allArticles = async (req, res) => {
   const { page, size } = req.query;
@@ -23,8 +23,10 @@ const allArticles = async (req, res) => {
 /**
  * Create a new article.
  *
- * @param {express.Request} req Body holding an object { userName, publishDate, articleTitle, liked Count, link}.
+ * @param {express.Request}  req Body holding an object { userName, publishDate, articleTitle, liked Count, link}.
  * @param {express.Response} res Sends the added article as JSON Object.
+ *
+ *  @return {Promise<Object>} Created article.
  */
 const addArticle = async (req, res) => {
   const article = {
@@ -42,7 +44,7 @@ const addArticle = async (req, res) => {
 /**
  * Update likes count of article.
  *
- * @param {express.Request} req Request body holding JSON Object { id, passed }, passed value holds the updated likes count.
+ * @param {express.Request}  req Request body holding JSON Object { id, passed }, passed value holds the updated likes count.
  * @param {express.Response} res Response sends the updated article or an error in case of one.
  */
 const updateArticle = async (req, res) => {

@@ -17,8 +17,8 @@ module.exports.getPagination = (page, size) => {
  * Sets right articles to the right page, and calculates total needed pages.
  *
  * @param {Object[]} data Passed articles.
- * @param {number} page Requested page number.
- * @param {number} limit Number of articles per page.
+ * @param {number}   page Requested page number.
+ * @param {number}   limit Number of articles per page.
  *
  * @return {Object} Holding totalItems count, sliced articles, total pages, and the current page.
  */

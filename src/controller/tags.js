@@ -4,8 +4,10 @@ const { fetchTags, createTag } = require('../services/tags');
 /**
  * Get all tags from tags service.
  *
- * @param {express.Request} req
- * @param {express.Response} res
+ * @param {express.Request}  req Request.
+ * @param {express.Response} res Response.
+ *
+ * @return {Promise<Object>} Fetched tags.
  */
 const allTags = async (req, res) => {
   const data = await fetchTags();
@@ -16,8 +18,10 @@ const allTags = async (req, res) => {
 /**
  * Create a new tag.
  *
- * @param {express.Request} req
- * @param {express.Response} res
+ * @param {express.Request}  req Request.
+ * @param {express.Response} res Response.
+ *
+ * @return {Promise<Object>} Created tag.
  */
 const addTag = async (req, res) => {
   const tag = req.body.name;

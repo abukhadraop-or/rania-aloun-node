@@ -50,8 +50,8 @@ const createArticle = async (article) => {
 /**
  * Update likes count of article.
  *
- * @param {Number} id Id of the liked article to be updated.
- * @param {Number} passed New likes count.
+ * @param {number} id Id of the liked article to be updated.
+ * @param {number} passed New likes count.
  *
  * @return {string} Message to indicate success.
  */
