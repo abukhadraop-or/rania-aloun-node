@@ -1,5 +1,5 @@
 const express = require('express');
-const { allTags, addTag } = require('../services/tags');
+const { fetchTags, createTag } = require('../services/tags');
 
 /**
  * Get all tags from tags service.
@@ -7,8 +7,8 @@ const { allTags, addTag } = require('../services/tags');
  * @param {express.Request} req
  * @param {express.Response} res
  */
-const getTags = async (req, res) => {
-  const data = await allTags();
+const allTags = async (req, res) => {
+  const data = await fetchTags();
 
   res.json(data);
 };
@@ -19,14 +19,14 @@ const getTags = async (req, res) => {
  * @param {express.Request} req
  * @param {express.Response} res
  */
-const postTag = async (req, res) => {
+const addTag = async (req, res) => {
   const tag = req.body.name;
-  const data = await addTag(tag);
+  const data = await createTag(tag);
 
   res.json(data);
 };
 
 module.exports = {
-  getTags,
-  postTag,
+  allTags,
+  addTag,
 };

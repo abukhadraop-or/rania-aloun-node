@@ -4,12 +4,12 @@ const { getPagination, getPagingData } = require('../utilities/pagination');
 /**
  * Get all articles with pagination and the associations included.
  *
- * @param {Number} page Page number received from request.
- * @param {Number} size Number of articles per page, received from request.
+ * @param {number} page Page number received from request.
+ * @param {number} size Number of articles per page, received from request.
  *
  * @return {Promise<Object>} Paginated article data.
  */
-const allArticles = async (page, size) => {
+const fetchArticles = async (page, size) => {
   const { limit, offset } = getPagination(page, size);
 
   const articles = await Article.findAndCountAll({
@@ -31,9 +31,9 @@ const allArticles = async (page, size) => {
  *
  * @param {Object} article Article object to be added to database.
  *
- * @return {string} Message to show success.
+ * @return {Promise<Object>} The created article.
  */
-const addArticle = async (article) => {
+const createArticle = async (article) => {
   const { userName, publishDate, articleTitle, liked, link } = article;
 
   const response = await Article.create({
@@ -53,7 +53,7 @@ const addArticle = async (article) => {
  * @param {Number} id Id of the liked article to be updated.
  * @param {Number} passed New likes count.
  *
- * @return {string} Message to show success.
+ * @return {string} Message to indicate success.
  */
 const updateArticlesLikes = async (id, passed) => {
   await Article.update(
@@ -66,8 +66,4 @@ const updateArticlesLikes = async (id, passed) => {
   return 'likes updated';
 };
 
-module.exports = {
-  allArticles,
-  addArticle,
-  updateArticlesLikes,
-};
+module.exports = { fetchArticles, createArticle, updateArticlesLikes };

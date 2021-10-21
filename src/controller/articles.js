@@ -1,7 +1,7 @@
 const express = require('express');
 const {
-  allArticles,
-  addArticle,
+  fetchArticles,
+  createArticle,
   updateArticlesLikes,
 } = require('../services/articles');
 
@@ -11,10 +11,11 @@ const {
  * @param {express.Request}  req Holding the page number, and page size.
  * @param {express.Response} res Response sends json object { totalItems, articles, totalPages, currentPage }.
  *
+ * @return {}
  */
-const getArticles = async (req, res) => {
+const allArticles = async (req, res) => {
   const { page, size } = req.query;
-  const data = await allArticles(page, size);
+  const data = await fetchArticles(page, size);
 
   res.send(data);
 };
@@ -25,7 +26,7 @@ const getArticles = async (req, res) => {
  * @param {express.Request} req Body holding an object { userName, publishDate, articleTitle, liked Count, link}.
  * @param {express.Response} res Sends the added article as JSON Object.
  */
-const postArticle = async (req, res) => {
+const addArticle = async (req, res) => {
   const article = {
     userName: req.body.userName,
     publishDate: req.body.publishDate,
@@ -34,7 +35,7 @@ const postArticle = async (req, res) => {
     link: req.body.link,
   };
 
-  const data = await addArticle(article);
+  const data = await createArticle(article);
   res.json(data);
 };
 
@@ -52,8 +53,4 @@ const updateArticle = async (req, res) => {
   res.send(data);
 };
 
-module.exports = {
-  getArticles,
-  postArticle,
-  updateArticle,
-};
+module.exports = { allArticles, addArticle, updateArticle };

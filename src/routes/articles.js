@@ -1,17 +1,25 @@
 const express = require('express');
+
 const router = express.Router();
 const {
-  getArticles,
-  postArticle,
+  allArticles,
+  addArticle,
   updateArticle,
 } = require('../controller/articles');
 
 /**
- * Articles routes.
+ * Fetches all the articles.
  */
-router.get('/', getArticles);
-router.post('/', postArticle);
+router.get('/', allArticles);
 
+/**
+ * Adds an article to the database.
+ */
+router.post('/', addArticle);
+
+/**
+ * Updates an article's likes count.
+ */
 router.put('/:id', updateArticle);
 
 module.exports = router;

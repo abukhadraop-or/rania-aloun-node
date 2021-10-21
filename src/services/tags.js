@@ -1,31 +1,29 @@
 const { tag } = require('../models');
 
 /**
- * Get all tags.
+ * Gets all tags.
  *
  * @returns {Promise<Object>} Fetched tags from db.
  */
-const allTags = async () => {
+const fetchTags = async () => {
   const tags = await tag.findAll();
 
   return tags;
 };
 
 /**
+ * Creates new tag in the database.
  *
  * @param {string} tag Tag name to be added.
  *
- * @returns
+ * @returns {{Promise<Object>}} Created Tag.
  */
-const addTag = async (tagName) => {
-  const response = tag.create({
+const createTag = async (tagName) => {
+  const response = await tag.create({
     name: tagName,
   });
 
-  return response;
+  return response.dataValues;
 };
 
-module.exports = {
-  allTags,
-  addTag,
-};
+module.exports = { fetchTags, createTag };

@@ -1,11 +1,16 @@
 const express = require('express');
+
 const router = express.Router();
-const { getTags, postTag } = require('../controller/tags');
+const { allTags, addTag } = require('../controller/tags');
 
 /**
- * Tags routes.
+ * Fetches all the tags.
  */
-router.get('/', getTags);
-router.post('/', postTag);
+router.get('/', allTags);
+
+/**
+ * Adds a tag to the database.
+ */
+router.post('/', addTag);
 
 module.exports = router;
