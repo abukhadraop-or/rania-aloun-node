@@ -22,7 +22,6 @@ const fetchArticles = async (page, size) => {
     limit,
     offset,
   });
-
   return getPagingData(articles, page, limit);
 };
 
