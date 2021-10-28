@@ -55,13 +55,14 @@ const createArticle = async (article) => {
  * @return {string} Message to indicate success.
  */
 const updateArticlesLikes = async (id, passed) => {
-  await Article.update(
+  const s = await Article.update(
     { liked: passed },
     {
       where: { id },
     }
   );
 
+  console.log('asdasd', s);
   return 'likes updated';
 };
 
