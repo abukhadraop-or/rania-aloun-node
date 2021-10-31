@@ -6,7 +6,7 @@
  *
  * @return {Object} Limit & offsets options for the request.
  */
-module.exports.getPagination = (page, size) => {
+const getPagination = (page, size) => {
   const limit = size ? +size : 3;
   const offset = page ? page * limit : 0;
 
@@ -22,10 +22,15 @@ module.exports.getPagination = (page, size) => {
  *
  * @return {Object} Holding totalItems count, sliced articles, total pages, and the current page.
  */
-module.exports.getPagingData = (data, page, limit) => {
+const getPagingData = (data, page, limit) => {
   const { count: totalItems, rows: articles } = data;
   const currentPage = page ? +page : 0;
   const totalPages = Math.ceil(totalItems / limit);
 
   return { totalItems, articles, totalPages, currentPage };
+};
+
+module.exports = {
+  getPagination,
+  getPagingData,
 };
