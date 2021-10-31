@@ -28,7 +28,6 @@ jest.mock('../../utilities/pagination', () => ({
   getPagingData: jest.fn().mockReturnValue(mockedReturnedArticles),
 }));
 
-const { updateArticle } = require('../../controller/articles');
 const {
   fetchArticles,
   createArticle,

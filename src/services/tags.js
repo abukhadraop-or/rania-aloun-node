@@ -7,7 +7,7 @@ const { tag } = require('../models');
  */
 const fetchTags = async () => {
   const tags = await tag.findAll();
-
+  console.log('tn tn tn tn', tags);
   return tags;
 };
 

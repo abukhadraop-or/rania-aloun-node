@@ -62,7 +62,6 @@ const updateArticlesLikes = async (id, passed) => {
     }
   );
 
-  console.log('asdasd', s);
   return 'likes updated';
 };
 
