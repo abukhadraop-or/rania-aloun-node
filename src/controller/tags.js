@@ -1,5 +1,6 @@
 const express = require('express');
 const { fetchTags, createTag } = require('../services/tags');
+const { formatResponse } = require('../utils/response');
 
 /**
  * Get all tags from tags service.
@@ -12,7 +13,7 @@ const { fetchTags, createTag } = require('../services/tags');
 const allTags = async (req, res) => {
   const data = await fetchTags();
 
-  res.json(data);
+  res.json(formatResponse(data));
 };
 
 /**
@@ -27,7 +28,7 @@ const addTag = async (req, res) => {
   const tag = req.body.name;
   const data = await createTag(tag);
 
-  res.json(data);
+  res.json(formatResponse(data));
 };
 
 module.exports = {

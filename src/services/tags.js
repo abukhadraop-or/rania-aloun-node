@@ -6,7 +6,9 @@ const { tag } = require('../models');
  * @returns {Promise<Object>} Fetched tags from db.
  */
 const fetchTags = async () => {
-  const tags = await tag.findAll();
+  const tags = await tag.findAll({
+    attributes: { exclude: ['createdAt', 'updatedAt'] },
+  });
   return tags;
 };
 
@@ -17,12 +19,10 @@ const fetchTags = async () => {
  *
  * @returns {{Promise<Object>}} Created Tag.
  */
-const createTag = async (tagName) => {
-  const response = await tag.create({
-    name: tagName,
-  });
+const createTags = async (data) => {
+  const response = await tag.bulkCreate(data);
 
-  return response.dataValues;
+  return response;
 };
 
-module.exports = { fetchTags, createTag };
+module.exports = { fetchTags, createTags };

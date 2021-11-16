@@ -1,9 +1,18 @@
-const express = require('express');
+const express = require('express-promise-router');
 const {
+  fetchArticle,
   fetchArticles,
   createArticle,
+  destroyArticle,
   updateArticlesLikes,
 } = require('../services/articles');
+const {
+  createAssociation,
+  removeAssociation,
+} = require('../services/tagArticle');
+const { fetchTags, createTags } = require('../services/tags');
+const { formatResponse } = require('../utils/response');
+const { NotFoundError } = require('../exceptions/errors');
 
 /**
  * Get all articles with pagination and the associations included.
@@ -17,28 +26,72 @@ const allArticles = async (req, res) => {
   const { page, size } = req.query;
   const data = await fetchArticles(page, size);
 
-  res.send(data);
+  res.send(formatResponse(data));
 };
 
 /**
- * Create a new article.
+ * Create a new article, with association to tags if any are added, and with association to the user who created it.
  *
- * @param {express.Request}  req Body holding an object { userName, publishDate, articleTitle, liked Count, link}.
+ * @param {express.Request}  req Body holding an object { userName, publishDate, articleTitle, liked Count, link, tags}.
  * @param {express.Response} res Sends the added article as JSON Object.
  *
- *  @return {Promise<Object>} Created article.
+ * @return {Promise<Object>} Created article.
  */
 const addArticle = async (req, res) => {
-  const article = {
-    userName: req.body.userName,
-    publishDate: req.body.publishDate,
-    articleTitle: req.body.articleTitle,
-    liked: req.body.liked,
-    link: req.body.link,
-  };
+  const { tags, ...articleData } = req.body;
+  const data = await createArticle(articleData);
 
-  const data = await createArticle(article);
-  res.json(data);
+  const newTags = [];
+  const existingTags = [];
+  const addedTags = [];
+
+  const receivedTags = tags;
+  const allTags = await fetchTags();
+
+  /**
+   * Checks if received tags are in db, adds them to newTags array if not.
+   */
+  if (receivedTags) {
+    receivedTags.forEach((receivedTag) => {
+      const found = allTags.find(
+        (existingTag) => existingTag.dataValues.name === receivedTag.name
+      );
+      if (!found) newTags.push(receivedTag);
+      else {
+        existingTags.push(found.dataValues);
+      }
+    });
+
+    if (newTags.length) {
+      const createdTags = await createTags(newTags);
+      createdTags.forEach((tag) => addedTags.push(tag.dataValues));
+    }
+
+    const newAssociation = [...existingTags, ...addedTags].map((tag) => ({
+      ArticleId: data.id,
+      TagId: tag.id,
+    }));
+
+    await createAssociation(newAssociation);
+  }
+
+  res.json(formatResponse(data));
+};
+
+/**
+ * Get an article.
+ *
+ * @param {express.Request}  req Holding the id of the article to be fetched.
+ * @param {express.Response} res Response sends json object { totalItems, articles, totalPages, currentPage }.
+ *
+ * @return {Promise<Object>} Fetched articles.
+ */
+const readArticle = async (req, res) => {
+  const data = await fetchArticle(req.params.id);
+  if (!data) res.send('Article is not found');
+  else {
+    res.send(formatResponse(data));
+  }
 };
 
 /**
@@ -54,7 +107,29 @@ const updateArticle = async (req, res) => {
   const { passed } = req.body;
 
   const data = await updateArticlesLikes(id, passed);
-  res.send(data);
+  res.send(formatResponse(data));
 };
 
-module.exports = { allArticles, addArticle, updateArticle };
+/**
+ * Delete an article.
+ *
+ * @param {express.Request}  req Holding the id of the article to be deleted.
+ * @param {express.Response} res Response sends json object { totalItems, articles, totalPages, currentPage }.
+ *
+ * @return {Promise<Object>} Deleted article.
+ */
+const removeArticle = async (req, res) => {
+  const data = await destroyArticle(req.params.id);
+
+  if (!data) throw new NotFoundError('Article Not Found');
+  await removeAssociation(req.params.id);
+  res.send(formatResponse(data, 'Article deleted'));
+};
+
+module.exports = {
+  allArticles,
+  addArticle,
+  readArticle,
+  updateArticle,
+  removeArticle,
+};

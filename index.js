@@ -3,9 +3,8 @@ const cors = require('cors');
 const articles = require('./src/routes/articles');
 const tags = require('./src/routes/tags');
 const users = require('./src/routes/users');
-const logins = require('./src/routes/logins');
 const errorHandler = require('./src/middleware/error-handler');
-const NotFoundError = require('./src/exceptions/notFound-error');
+const { NotFoundError } = require('./src/exceptions/errors');
 
 const app = express();
 
@@ -16,7 +15,6 @@ app.use(express.json());
 app.use('/api/articles', articles);
 app.use('/api/tags', tags);
 app.use('/api/users', users);
-app.use('/api/logins', logins);
 
 app.use('*', (req, res) => {
   throw new NotFoundError();

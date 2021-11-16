@@ -1,10 +1,10 @@
-const express = require('express');
-
-const router = express.Router();
+const router = require('express-promise-router')();
 const {
-  allArticles,
   addArticle,
+  allArticles,
+  readArticle,
   updateArticle,
+  removeArticle,
 } = require('../controller/articles');
 
 /**
@@ -18,8 +18,18 @@ router.get('/', allArticles);
 router.post('/', addArticle);
 
 /**
+ * Fetches an article.
+ */
+router.get('/:id', readArticle);
+
+/**
  * Updates an article's likes count.
  */
 router.put('/:id', updateArticle);
+
+/**
+ * Deletes an article.
+ */
+router.delete('/:id', removeArticle);
 
 module.exports = router;

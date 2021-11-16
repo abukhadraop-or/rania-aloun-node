@@ -1,7 +1,11 @@
-const express = require('express');
+const router = require('express-promise-router')();
 
-const router = express.Router();
-const { allUsers, registerUser, modifyUser } = require('../controller/users');
+const {
+  allUsers,
+  modifyUser,
+  registerUser,
+  authenticateUser,
+} = require('../controller/users');
 const validateUser = require('../middleware/validate-user');
 
 /**
@@ -12,7 +16,12 @@ router.get('/', allUsers);
 /**
  * Adds a user to the database.
  */
-router.post('/', validateUser, registerUser);
+router.post('/signup', validateUser, registerUser);
+
+/**
+ * Logs in a user.
+ */
+router.post('/login', authenticateUser);
 
 /**
  * Updates a user.

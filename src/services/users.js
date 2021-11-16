@@ -6,7 +6,9 @@ const { User } = require('../models');
  * @return {Promise<Object>} Users.
  */
 const fetchUsers = async () => {
-  const users = await User.findAll();
+  const users = await User.findAll({
+    attributes: { exclude: ['createdAt', 'updatedAt'] },
+  });
 
   return users;
 };
@@ -17,7 +19,10 @@ const fetchUsers = async () => {
  * @return {Promise<Object>} Users.
  */
 const fetchUser = async (email) => {
-  const user = await User.findOne({ where: { email } });
+  const user = await User.findOne({
+    where: { email },
+    attributes: { exclude: ['createdAt', 'updatedAt'] },
+  });
   return user;
 };
 

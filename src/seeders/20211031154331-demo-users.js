@@ -1,3 +1,4 @@
+// password: 12345
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.bulkInsert(
@@ -7,7 +8,7 @@ module.exports = {
           username: 'Rania',
           email: 'Rania_aloun@outlook.com',
           password:
-            '$2b$10$iq8epsg1m9nD5323SALQ8e3B/I2Q5XrcTNiHpmsbxqsY3l11hTp7m',
+            '$2b$10$OQ7HVc9UyXia.7NHtp8Ki.1qQ0AzJpcC7SBwugWmP2fB5ZE4ZKg2e',
           shortBio: 'A happy proud human',
           pictureUrl: 'www.random.com',
           createdAt: new Date(),

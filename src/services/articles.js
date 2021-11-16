@@ -1,5 +1,5 @@
 const { Article, tag } = require('../models');
-const { getPagination, getPagingData } = require('../utilities/pagination');
+const { getPagination, getPagingData } = require('../utils/pagination');
 
 /**
  * Get all articles with pagination and the associations included.
@@ -16,8 +16,13 @@ const fetchArticles = async (page, size) => {
     include: [
       {
         model: tag,
+        attributes: { exclude: ['createdAt', 'updatedAt', 'id'] },
+        through: {
+          attributes: [],
+        },
       },
     ],
+    attributes: { exclude: ['createdAt', 'updatedAt'] },
     distinct: true,
     limit,
     offset,
@@ -33,17 +38,41 @@ const fetchArticles = async (page, size) => {
  * @return {Promise<Object>} The created article.
  */
 const createArticle = async (article) => {
-  const { userName, publishDate, articleTitle, liked, link } = article;
-
+  const { userName, publishDate, articleTitle, liked, link, tags } = article;
   const response = await Article.create({
     userName,
     publishDate,
     articleTitle,
     liked,
     link,
+    tags,
   });
 
   return response.dataValues;
+};
+
+/**
+ * Fetches an article based on id.
+ *
+ * @param {number} id Article id.
+ *
+ * @return {Promise<Object>} The fetched article.
+ */
+const fetchArticle = async (id) => {
+  const article = await Article.findOne({
+    include: [
+      {
+        model: tag,
+        attributes: { exclude: ['createdAt', 'updatedAt', 'id'] },
+        through: {
+          attributes: [],
+        },
+      },
+    ],
+    attributes: { exclude: ['createdAt', 'updatedAt'] },
+    where: { id },
+  });
+  return article;
 };
 
 /**
@@ -55,7 +84,7 @@ const createArticle = async (article) => {
  * @return {string} Message to indicate success.
  */
 const updateArticlesLikes = async (id, passed) => {
-  const s = await Article.update(
+  await Article.update(
     { liked: passed },
     {
       where: { id },
@@ -65,4 +94,22 @@ const updateArticlesLikes = async (id, passed) => {
   return 'likes updated';
 };
 
-module.exports = { fetchArticles, createArticle, updateArticlesLikes };
+/**
+ * Fetches an article based on id.
+ *
+ * @param {number} id Article id.
+ *
+ * @return {Promise<Object>} The fetched article.
+ */
+const destroyArticle = async (id) => {
+  const article = await Article.destroy({ where: { id } });
+  return article;
+};
+
+module.exports = {
+  fetchArticles,
+  createArticle,
+  fetchArticle,
+  updateArticlesLikes,
+  destroyArticle,
+};

@@ -1,9 +1,15 @@
-const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const _ = require('lodash');
 const config = require('../config/custom-environment-variables.json');
-const { fetchUsers, createUser, updateUser } = require('../services/users');
+const {
+  fetchUsers,
+  createUser,
+  fetchUser,
+  updateUser,
+} = require('../services/users');
+const { AuthenticationError, Forbidden } = require('../exceptions/errors');
+const { formatResponse } = require('../utils/response');
 
 /**
  * Gets all users.
@@ -16,11 +22,11 @@ const { fetchUsers, createUser, updateUser } = require('../services/users');
 const allUsers = async (req, res) => {
   const data = await fetchUsers();
 
-  res.json(data);
+  res.json(formatResponse(data));
 };
 
 /**
- * Registers a new user in the system.
+ * Registers a new user in the system if email doesn't exist.
  *
  * @param {express.Request} req Request body holding an object {username, email, password}.
  * @param {express.Response} res Response sends the registered user as JSON Object.
@@ -34,11 +40,39 @@ const registerUser = async (req, res) => {
     password: req.body.password,
   };
 
-  const salt = await bcrypt.genSalt(10);
-  user.password = await bcrypt.hash(user.password, salt);
+  const existingUsers = await fetchUsers();
+  const found = existingUsers.find(
+    (existingUser) => existingUser.dataValues.email === user.email
+  );
+  if (!found) {
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(user.password, salt);
 
-  const data = await createUser(user);
-  res.send(data);
+    const data = await createUser(user);
+    res.send(formatResponse(data));
+  }
+  throw new Forbidden('Email already registered.');
+};
+
+/**
+ * Authenticates a user in the system.
+ *
+ * @param {express.Request} req Request body holding an object {email, password}.
+ * @param {express.Response} res Response sends the registered user as JSON Object.
+ *
+ * @return {Promise<Object>}
+ */
+const authenticateUser = async (req, res) => {
+  const user = await fetchUser(req.body.email);
+  if (!user) throw new AuthenticationError('Invalid Email');
+
+  const validPassword = await bcrypt.compare(req.body.password, user.password);
+  if (!validPassword)
+    throw new AuthenticationError('Wrong password, try again');
+
+  const token = jwt.sign({ id: user.id }, config.jwtPrivateKey);
+  user.dataValues.token = token;
+  return res.send(formatResponse(user));
 };
 
 /**
@@ -56,7 +90,7 @@ const modifyUser = async (req, res) => {
   const bio = req.body.bio || notUpdated;
 
   const data = await updateUser(id, imgUrl, bio);
-  res.send(data);
+  res.send(formatResponse(data));
 };
 
-module.exports = { allUsers, registerUser, modifyUser };
+module.exports = { allUsers, registerUser, modifyUser, authenticateUser };
